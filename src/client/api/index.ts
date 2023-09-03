@@ -5,7 +5,7 @@ import { NoteItem, SyncPayload, SettingsState } from '@/types'
 
 const scratchpadNote = {
   id: uuid(),
-  text: `# Scratchpad
+  text: `# Scratchpad a
 
 The easiest note to find.`,
   category: '',

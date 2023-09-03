@@ -8,6 +8,7 @@ import { LabelText } from '@resources/LabelText'
 import { Folder, NotesSortKey } from '@/utils/enums'
 import { folderMap } from '@/utils/constants'
 import { NoteItem, CategoryItem, WithPayload } from '@/types'
+import { updateNote } from '@/slices/note'
 
 export const getActiveNote = (notes: NoteItem[], activeNoteId: string) =>
   notes.find((note) => note.id === activeNoteId)
@@ -46,6 +47,36 @@ category: ${category?.name ?? ''}
 
 ${note.text}`
 
+const readSelectFileMetaData = (filesData, notes, activeNoteId, dispatch) => {
+  const getActiveNoteVal = getActiveNote(notes, activeNoteId)
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const updatedText = {
+      ...getActiveNoteVal,
+      text: getActiveNoteVal.text + '\n' + e.target?.result,
+      // alert(text)
+    }
+    dispatch(updateNote(updatedText))
+  }
+  reader.readAsText(filesData)
+}
+
+export const txtFilesReader = (notes, activeNoteId, dispatch) => {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.onchange = (_) => {
+    // you can use this method to get file and perform respective operations
+    const files = Array.from(input.files)
+    const filesData = files[0]
+    if (filesData && filesData.name.includes('.txt')) {
+      readSelectFileMetaData(filesData, notes, activeNoteId, dispatch)
+    } else {
+      alert(' Select .txt file only ')
+    }
+  }
+  input.click()
+}
+// -----------------------------------------
 // Downloads a single note as a markdown file or a group of notes as a zip file.
 export const downloadNotes = (notes: NoteItem[], categories: CategoryItem[]): void => {
   if (notes.length === 1) {

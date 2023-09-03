@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  FilePlus,
   Eye,
   Edit,
   Star,
@@ -25,7 +26,13 @@ import {
 } from '@/slices/settings'
 import { toggleFavoriteNotes, toggleTrashNotes } from '@/slices/note'
 import { getCategories, getNotes, getSync, getSettings } from '@/selectors'
-import { downloadNotes, isDraftNote, getShortUuid, copyToClipboard } from '@/utils/helpers'
+import {
+  downloadNotes,
+  isDraftNote,
+  getShortUuid,
+  copyToClipboard,
+  txtFilesReader,
+} from '@/utils/helpers'
 import { sync } from '@/slices/sync'
 
 export const NoteMenuBar = () => {
@@ -89,6 +96,7 @@ export const NoteMenuBar = () => {
   // ===========================================================================
 
   const downloadNotesHandler = () => downloadNotes([activeNote], categories)
+  const filesNotesHandler = () => txtFilesReader(notes, activeNoteId, dispatch)
   const favoriteNoteHandler = () => _toggleFavoriteNotes(activeNoteId)
   const trashNoteHandler = () => _toggleTrashNotes(activeNoteId)
   const syncNotesHandler = () => _sync(notes, categories)
@@ -134,6 +142,12 @@ export const NoteMenuBar = () => {
             <Download aria-hidden="true" size={18} onClick={downloadNotesHandler} />
             <span className="sr-only">Download note</span>
           </button>
+          {/* ------------------------------------------------- */}
+          <button className="note-menu-bar-button">
+            <FilePlus aria-hidden="true" size={18} onClick={filesNotesHandler} />
+            <span className="sr-only">Select file</span>
+          </button>
+          {/* ---------------------------------- */}
           <button
             className="note-menu-bar-button uuid"
             onClick={() => {
